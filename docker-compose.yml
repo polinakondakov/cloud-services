@@ -1,0 +1,10 @@
+services:
+  service-a:
+    build: ./service-a
+    ports:
+      - "8001:8000"
+
+  service-b:
+    build: ./service-b
+    ports:
+      - "8002:8000"

@@ -1,0 +1,84 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Windows\system32> cd ~
+PS C:\Users\konda> cd OneDrive\Desktop\"Облачные сервисы"\lab-docker
+PS C:\Users\konda\OneDrive\Desktop\Облачные сервисы\lab-docker> docker compose up --build
+[+] Building 11.4s (20/20) FINISHED
+ => [internal] load local bake definitions                                                                         0.0s
+ => => reading from stdin 1.22kB                                                                                   0.0s
+ => [service-b internal] load build definition from Dockerfile                                                     0.1s
+ => => transferring dockerfile: 246B                                                                               0.0s
+ => [service-a internal] load build definition from Dockerfile                                                     0.0s
+ => => transferring dockerfile: 246B                                                                               0.0s
+ => [service-a internal] load metadata for docker.io/library/python:3.12-slim                                     10.4s
+ => [service-a internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [service-b internal] load .dockerignore                                                                        0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [service-b 1/5] FROM docker.io/library/python:3.12-slim@sha256:05cda9777409a9c3ffddd94a4c476b79f0769a0b4857f0  0.1s
+ => => resolve docker.io/library/python:3.12-slim@sha256:05cda9777409a9c3ffddd94a4c476b79f0769a0b4857f0c7ed9226b6  0.1s
+ => [service-b internal] load build context                                                                        0.0s
+ => => transferring context: 63B                                                                                   0.0s
+ => [service-a internal] load build context                                                                        0.0s
+ => => transferring context: 211B                                                                                  0.0s
+ => CACHED [service-b 2/5] WORKDIR /app                                                                            0.0s
+ => CACHED [service-a 3/5] COPY requirements.txt .                                                                 0.0s
+ => CACHED [service-a 4/5] RUN pip install --no-cache-dir -r requirements.txt                                      0.0s
+ => CACHED [service-a 5/5] COPY app.py .                                                                           0.0s
+ => CACHED [service-b 3/5] COPY requirements.txt .                                                                 0.0s
+ => CACHED [service-b 4/5] RUN pip install --no-cache-dir -r requirements.txt                                      0.0s
+ => CACHED [service-b 5/5] COPY app.py .                                                                           0.0s
+ => [service-b] exporting to image                                                                                 0.3s
+ => => exporting layers                                                                                            0.0s
+ => => exporting manifest sha256:ee9e9bfc631d7a3956602bb27898bf52fe49774f2f4c644ebc443937180c6e97                  0.0s
+ => => exporting config sha256:155d8e7cd4faa31a753ba4f092201dc920526c7b67590a78d6f406a9316a7443                    0.0s
+ => => exporting attestation manifest sha256:c330b463dd3fc4daabbfc466bb1a5a53b0207582dd8437136736a0c9ed54fe9f      0.1s
+ => => exporting manifest list sha256:3685db284bc04ff5a72ac2f5121c0f4a53fe0484de78eb6799706e592c5b99d5             0.0s
+ => => naming to docker.io/library/lab-docker-service-b:latest                                                     0.0s
+ => => unpacking to docker.io/library/lab-docker-service-b:latest                                                  0.0s
+ => [service-a] exporting to image                                                                                 0.3s
+ => => exporting layers                                                                                            0.0s
+ => => exporting manifest sha256:9f066557c40be9a1b96d07489603fdc09222cbb48b3f4d76610b7d86d101d5b3                  0.0s
+ => => exporting config sha256:f1512d93d02eb01a82c73ec6ab7c878d8c9c3a50080a3b7420c62ae7296a5336                    0.0s
+ => => exporting attestation manifest sha256:5be94934be365703e13cd37cb08a94a7db1dad858d40cfa2a63774380cb55338      0.1s
+ => => exporting manifest list sha256:3a347c2f5f1d19717385fa2be8a2bb9f45f749068e5b583e5c91f16219900e85             0.1s
+ => => naming to docker.io/library/lab-docker-service-a:latest                                                     0.0s
+ => => unpacking to docker.io/library/lab-docker-service-a:latest                                                  0.0s
+ => [service-b] resolving provenance for metadata file                                                             0.0s
+ => [service-a] resolving provenance for metadata file                                                             0.0s
+[+] up 5/5
+ ✔ Image lab-docker-service-a       Built                                                                          11.8s
+ ✔ Image lab-docker-service-b       Built                                                                          11.8s
+ ✔ Network lab-docker_default       Created                                                                         0.1s
+ ✔ Container lab-docker-service-b-1 Created                                                                         0.2s
+ ✔ Container lab-docker-service-a-1 Created                                                                         0.2s
+Attaching to service-a-1, service-b-1
+service-b-1  | INFO:     Started server process [1]
+service-a-1  | INFO:     Started server process [1]
+
+
+service-a-1  | INFO:     Waiting for application startup.
+service-b-1  | INFO:     Waiting for application startup.
+service-a-1  | INFO:     Application startup complete.
+
+service-b-1  | INFO:     Application startup complete.
+service-a-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+service-b-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+
+
+
+
+service-a-1  | INFO:     172.18.0.1:44048 - "GET / HTTP/1.1" 200 OK
+service-a-1  | INFO:     172.18.0.1:44048 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+service-b-1  | INFO:     172.18.0.1:46730 - "GET / HTTP/1.1" 200 OK
+service-b-1  | INFO:     172.18.0.1:46730 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+service-a-1  | INFO:     172.18.0.1:38460 - "GET / HTTP/1.1" 200 OK
+service-b-1  | INFO:     172.18.0.1:46732 - "GET / HTTP/1.1" 200 OK
+
+Container lab-docker-service-a-1 Stopping
+Container lab-docker-service-b-1 Stopping  w Enable Watch   d Detach
+
+
+Container lab-docker-service-b-1 Stopped
+Container lab-docker-service-a-1 Stopped
