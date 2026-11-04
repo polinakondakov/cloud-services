@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s3-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s3-backend
+  template:
+    metadata:
+      labels:
+        app: s3-backend
+    spec:
+      containers:
+        - name: backend
+          image: lab2-backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: s3-credentials
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: s3-backend
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP

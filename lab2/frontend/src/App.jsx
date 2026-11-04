@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
-function App() {
-  const [buckets, setBuckets] = useState([])
+function App() { 
+  const [buckets, setBuckets] = useState([]) // создание состояния в котором сначала пустой список бакетов
   const [bucketName, setBucketName] = useState('')
   const [selectedBucket, setSelectedBucket] = useState('')
   const [files, setFiles] = useState([])
@@ -20,46 +20,46 @@ function App() {
     return response
   }
 
-  async function loadBuckets() {
+  async function loadBuckets() { // функция получения бакетов
     try {
-      const response = await checkResponse(await fetch('/buckets'))
-      const data = await response.json()
-      setBuckets(data.buckets)
+      const response = await checkResponse(await fetch('/buckets')) // отпправляем get запрос, который попадает в fast api
+      const data = await response.json() // fast api возвращает json
+      setBuckets(data.buckets) // обновляем состояние react
     } catch (error) {
       setMessage(error.message)
     }
   }
 
-  async function createBucket() {
+  async function createBucket() { // создание бакета
     if (!bucketName.trim()) return
 
     try {
       await checkResponse(await fetch(
-        `/buckets/${encodeURIComponent(bucketName.trim())}`,
-        { method: 'POST' }
+        `/buckets/${encodeURIComponent(bucketName.trim())}`, // формирование адреса
+        { method: 'POST' } // отправляем запрос
       ))
 
       setBucketName('')
       setMessage('Бакет создан')
-      await loadBuckets()
+      await loadBuckets() // вызывается получение списка бакетов 
     } catch (error) {
       setMessage(error.message)
     }
   }
 
   async function deleteBucket(name) {
-    if (!window.confirm(`Удалить бакет ${name}?`)) return
+    if (!window.confirm(`Удалить бакет ${name}?`)) return // подтверждение удаления
 
     try {
       await checkResponse(await fetch(
         `/buckets/${encodeURIComponent(name)}`,
-        { method: 'DELETE' }
+        { method: 'DELETE' } // отправка запроса
       ))
 
-      if (selectedBucket === name) {
-        setSelectedBucket('')
-        setFiles([])
-        setFileContent('')
+      if (selectedBucket === name) { // очистка выбранного бакета
+        setSelectedBucket('') // сбрасываем выбранный бакет
+        setFiles([]) // очищаем список файлов на странице
+        setFileContent('') // убираем показанное содержимое текстового файла.
       }
 
       setMessage('Бакет удалён')
@@ -69,35 +69,36 @@ function App() {
     }
   }
 
-  async function loadFiles(bucket) {
+  async function loadFiles(bucket) { // получение списка файлов
     try {
       const response = await checkResponse(await fetch(
-        `/buckets/${encodeURIComponent(bucket)}/files`
+        `/buckets/${encodeURIComponent(bucket)}/files` // формируется гет запрос
+        // в fast api вызывается list_files
       ))
-      const data = await response.json()
-      setFiles(data.files)
+      const data = await response.json() // получение списка файлов
+      setFiles(data.files) // сохранение полученного массива
     } catch (error) {
       setMessage(error.message)
     }
   }
 
-  function selectBucket(name) {
-    setSelectedBucket(name)
-    setFiles([])
-    setFileContent('')
-    setImageUrl('')
-    setSelectedFile(null)
-    loadFiles(name)
+  function selectBucket(name) { // выбор бакета
+    setSelectedBucket(name) // какой бакет выбрал пользователь
+    setFiles([]) // очищаем предыдущиц список файлов
+    setFileContent('') // убираем содержимое ранее открытого файла
+    setImageUrl('') // Убираем содержимое ранее открытого текстового файла
+    setSelectedFile(null) // Сбрасываем выбранный для загрузки файл
+    loadFiles(name) // Запрашиваем список файлов нового бакета
   }
 
-  async function uploadFile() {
+  async function uploadFile() { // загрузка файлов
     if (!selectedBucket || !selectedFile) {
       setMessage('Выберите бакет и файл')
       return
     }
 
-    const formData = new FormData()
-    formData.append('file', selectedFile)
+    const formData = new FormData() // объект JS лля формирования данных которые отправляются на сервер
+    formData.append('file', selectedFile) // добавляем файл в форму
 
     try {
       await checkResponse(await fetch(
@@ -105,33 +106,35 @@ function App() {
         {
           method: 'POST',
           body: formData
-        }
+        } // запрос на отправку файла
       ))
 
       setMessage('Файл загружен')
-      setSelectedFile(null)
-      document.getElementById('fileInput').value = ''
-      await loadFiles(selectedBucket)
+      setSelectedFile(null) // Сбрасываем выбранный файл.
+      document.getElementById('fileInput').value = '' // Очищаем HTML-поле выбора файла
+      await loadFiles(selectedBucket) // запрашиваем список файлов чтоб новый файл появился
     } catch (error) {
       setMessage(error.message)
     }
   }
 
-  async function viewFile(name) {
+  async function viewFile(name) { // просмотр файлов
   try {
     const response = await checkResponse(await fetch(
       `/buckets/${encodeURIComponent(selectedBucket)}/files/${encodeURIComponent(name)}`
-    ))
+    )) // формирование get запроса
 
-    const blob = await response.blob()
-    const extension = name.split('.').pop().toLowerCase()
+    // FastAPI принимает запрос, вызывает get_file(), получает данные из VK Cloud и отправляет их обратно в React
+    const blob = await response.blob() // объект который представляет набор данных, содержимое файла
+    const extension = name.split('.').pop().toLowerCase() // определение расширения
 
+    // обработка текста и картинок остальное скачиваем
     if (extension === 'txt') {
       setImageUrl('')
       setFileContent(await blob.text())
     } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
       setFileContent('')
-      setImageUrl(URL.createObjectURL(blob))
+      setImageUrl(URL.createObjectURL(blob)) // временный адрес, по которому браузер может обращаться к уже полученным данным
     } else {
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
@@ -145,7 +148,7 @@ function App() {
   }
 }
 
-  async function deleteFile(name) {
+  async function deleteFile(name) { // удаление файла
     if (!window.confirm(`Удалить файл ${name}?`)) return
 
     try {
@@ -162,6 +165,7 @@ function App() {
     }
   }
 
+  // автоматически загрузить список бакетов при открытии страницы
   useEffect(() => {
     loadBuckets()
   }, [])
@@ -173,7 +177,7 @@ function App() {
 
       <h3>Бакеты</h3>
 
-      <input
+      <input 
         placeholder="Название бакета"
         value={bucketName}
         onChange={e => setBucketName(e.target.value)}
