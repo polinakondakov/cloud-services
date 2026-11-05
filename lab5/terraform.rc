@@ -1,0 +1,6 @@
+provider_installation {
+  network_mirror {
+    url     = "https://terraform-mirror.mcs.mail.ru"
+    include = ["registry.terraform.io/*/*"]
+  }
+}
