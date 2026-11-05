@@ -5,3 +5,11 @@ __pycache__/
 *.pyc
 frontend/node_modules/
 frontend/dist/
+
+terraform.exe
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+LICENSE.txt
