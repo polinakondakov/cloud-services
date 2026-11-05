@@ -9,7 +9,7 @@ from s3_service import (
 from fastapi import UploadFile, File
 from fastapi.responses import Response
 
-app = FastAPI() # создание приложения
+app = FastAPI() 
 
 
 @app.get("/")
